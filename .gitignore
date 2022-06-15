@@ -1,0 +1,9 @@
+dist/
+dist.zip
+env_who-let-the-dogs-out/
+.terraform/
+/deployment/.terraform.lock.hcl
+/deployment/terraform.tfstate
+/deployment/terraform.tfstate.backup
+.pytest_cache/
+.DS_Store
