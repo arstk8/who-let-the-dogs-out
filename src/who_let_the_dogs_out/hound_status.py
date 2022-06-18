@@ -6,7 +6,8 @@ import boto3
 from src.who_let_the_dogs_out.dog_message import DogMessage
 
 dynamodb_client = boto3.client('dynamodb')
-apigateway_client = boto3.client('apigatewaymanagementapi', endpoint_url=getenv("ENDPOINT_URL"))
+apigateway_client = boto3.client('apigatewaymanagementapi',
+                                 endpoint_url=getenv("ENDPOINT_URL").replace('wss', 'https', 1))
 
 
 def handle(event, _):
