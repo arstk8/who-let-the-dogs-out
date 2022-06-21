@@ -26,11 +26,13 @@ variable role_name {
 variable policy_name {
   description = "The name of the principal of the lambda's execution role"
   type        = string
+  default     = null
 }
 
 variable policy_json {
   description = "Json representation of the principal policy of the lambda's execution role"
   type        = string
+  default     = null
 }
 
 variable environment {

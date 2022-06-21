@@ -20,11 +20,13 @@ resource aws_iam_role_policy_attachment role_attachment {
 }
 
 resource aws_iam_policy lambda_policy {
+  count  = var.policy_name == null ? 0 : 1
   name   = var.policy_name
   policy = var.policy_json
 }
 
 resource aws_iam_role_policy_attachment lambda_role_policy_attachment {
-  policy_arn = aws_iam_policy.lambda_policy.arn
+  count      = var.policy_name == null ? 0 : 1
+  policy_arn = aws_iam_policy.lambda_policy[0].arn
   role       = aws_iam_role.lambda_role.name
 }

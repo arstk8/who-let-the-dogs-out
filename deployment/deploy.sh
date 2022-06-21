@@ -7,6 +7,7 @@ VIRTUALENV_NAME=env_who-let-the-dogs-out
 PYTHON_RUNTIME=python3.8
 DIST_DIRECTORY=dist
 
+pip install virtualenv
 virtualenv -p $PYTHON_RUNTIME $VIRTUALENV_NAME
 source "$VIRTUALENV_NAME/bin/activate"
 pip install -r "$ROOT_DIR/requirements.txt"

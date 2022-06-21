@@ -24,4 +24,8 @@ module websocket_api {
       invoke_arn           = module.release_lambda.invoke_arn
     }
   }
+  authorizer_lambda = {
+    name       = module.authorizer_lambda.function_name
+    invoke_arn = module.authorizer_lambda.invoke_arn
+  }
 }

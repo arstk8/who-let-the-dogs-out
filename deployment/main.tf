@@ -2,7 +2,7 @@ terraform {
   backend "s3" {
     bucket = "wltdo-tf-state"
     region = "us-east-1"
-    key = "wltdo-backend/terraform.tfstate"
+    key    = "wltdo-backend/terraform.tfstate"
   }
 }
 

@@ -30,6 +30,12 @@ variable route_key {
   type        = string
 }
 
+variable authorizer_id {
+  description = "The id of the authorizer for this route"
+  type        = string
+  default     = null
+}
+
 resource aws_apigatewayv2_integration integration {
   api_id           = var.api.id
   integration_type = "AWS_PROXY"
@@ -42,8 +48,10 @@ resource aws_apigatewayv2_integration integration {
 }
 
 resource aws_apigatewayv2_route route {
-  api_id    = var.api.id
-  route_key = var.route_key
+  api_id             = var.api.id
+  route_key          = var.route_key
+  authorization_type = var.authorizer_id == null || var.route_key != "$connect" ? null : "CUSTOM"
+  authorizer_id      = var.route_key == "$connect" ? var.authorizer_id : null
 
   target = "integrations/${aws_apigatewayv2_integration.integration.id}"
 }

@@ -27,7 +27,7 @@ def __post_current_state_to_connection(connection_id):
     scan_results = dynamodb_client.scan(TableName=getenv('DOG_TABLE_NAME'))
 
     dog_messages = list(
-        map(lambda item: DogMessage(item['owner_id']['S'], item['ttl']['N']).get_payload(), scan_results['Items'])
+        map(lambda item: DogMessage(item['username']['S'], item['ttl']['N']).get_payload(), scan_results['Items'])
     )
     message_payload = json.dumps(dog_messages).encode('utf-8')
     apigateway_client.post_to_connection(Data=message_payload, ConnectionId=connection_id)

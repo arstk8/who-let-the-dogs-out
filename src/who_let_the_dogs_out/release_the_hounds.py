@@ -14,8 +14,8 @@ apigateway_client = boto3.client('apigatewaymanagementapi',
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
-    owner_id = json.loads(event['body'])['data']
-    __add_dog(connection_id, owner_id)
+    username = json.loads(event['body'])['data']
+    __add_dog(connection_id, username)
     return {
         'statusCode': 200,
         'body': 'Added Dog!',
@@ -25,17 +25,17 @@ def handle(event, _):
     }
 
 
-def __add_dog(connection_id, owner_id):
+def __add_dog(connection_id, username):
     thirty_minutes_in_seconds = 30 * 60
     time_to_live = int(time.time()) + thirty_minutes_in_seconds
     dynamodb_client.put_item(
         TableName=getenv('DOG_TABLE_NAME'),
         Item={
-            'owner_id': {'S': owner_id},
+            'username': {'S': username},
             'ttl': {'N': str(time_to_live)}
         }
     )
-    __notify_connections(connection_id, DogMessage(owner_id, time_to_live))
+    __notify_connections(connection_id, DogMessage(username, time_to_live))
 
 
 def __notify_connections(connection_id, dog_message):

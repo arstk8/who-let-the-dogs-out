@@ -3,6 +3,7 @@ locals {
   disconnect_function_name = "wltdo-disconnect"
   status_function_name     = "wltdo-houndstatus"
   release_function_name    = "wltdo-releasethehounds"
+  authorizer_function_name = "wltdo-authorizer"
 }
 
 module connect_lambda {
@@ -124,5 +125,18 @@ data aws_iam_policy_document release_policy_document {
       "execute-api:ManageConnections"
     ]
     resources = ["${module.websocket_api.execution_arn}/*"]
+  }
+}
+
+module authorizer_lambda {
+  source        = "./modules/lambda"
+  filename      = "dist.zip"
+  function_name = local.authorizer_function_name
+  handler       = "src/who_let_the_dogs_out/authorizer.handle"
+  runtime       = "python3.8"
+  role_name     = "wltdo-authorizer-role"
+  environment   = {
+    USERPOOL_ID   = "us-east-1_TSx9oPG6A"
+    APP_CLIENT_ID = "4nookoo66lnnkpsflq7to37dt0"
   }
 }

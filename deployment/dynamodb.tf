@@ -40,19 +40,19 @@ module hounds_table {
     max_capacity               = 10
     target_capacity_percentage = 70
   }
-  hash_key   = "owner_id"
+  hash_key   = "username"
   attributes = {
-    owner_id = {
-      name = "owner_id"
+    username = {
+      name = "username"
       type = "S"
     }
   }
   ttl = "ttl"
 }
 
-module owners_table {
+module users_table {
   source        = "./modules/dynamodb"
-  name          = "wltdo-owners"
+  name          = "wltdo-users"
   billing_mode  = "PROVISIONED"
   read_capacity = {
     capacity                   = 1
@@ -66,15 +66,15 @@ module owners_table {
     max_capacity               = 10
     target_capacity_percentage = 70
   }
-  hash_key   = "owner_id"
-  range_key  = "neighbor_group_id"
+  hash_key   = "username"
+  range_key  = "neighbor_group"
   attributes = {
-    owner_id = {
-      name = "owner_id"
+    username = {
+      name = "username"
       type = "S"
     }
-    neighbor_group_id = {
-      name = "neighbor_group_id"
+    neighbor_group = {
+      name = "neighbor_group"
       type = "S"
     }
   }
