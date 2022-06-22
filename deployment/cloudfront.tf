@@ -67,7 +67,8 @@ resource aws_cloudfront_origin_request_policy request_policy {
         "Sec-WebSocket-Version",
         "Sec-WebSocket-Protocol",
         "Sec-WebSocket-Accept",
-        "neighbor-group"
+        "neighbor-group",
+        "username"
       ]
     }
   }

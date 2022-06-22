@@ -65,8 +65,9 @@ module status_lambda {
   policy_name   = "wltdo-status-policy"
   policy_json   = data.aws_iam_policy_document.status_policy_document.json
   environment   = {
-    DOG_TABLE_NAME = module.hounds_table.name
-    ENDPOINT_URL   = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
+    CONNECTION_TABLE_NAME = module.connections_table.name
+    DOG_TABLE_NAME        = module.hounds_table.name
+    ENDPOINT_URL          = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
   }
 }
 
@@ -77,6 +78,13 @@ data aws_iam_policy_document status_policy_document {
       "dynamodb:Query"
     ]
     resources = [module.hounds_table.arn]
+  }
+  statement {
+    effect  = "Allow"
+    actions = [
+      "dynamodb:Query"
+    ]
+    resources = [module.connections_table.arn]
   }
   statement {
     effect  = "Allow"
@@ -98,8 +106,9 @@ module neighbors_lambda {
   policy_name   = "wltdo-neighbors-policy"
   policy_json   = data.aws_iam_policy_document.neighbors_policy_document.json
   environment   = {
-    USERS_TABLE_NAME = module.users_table.name
-    ENDPOINT_URL     = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
+    CONNECTION_TABLE_NAME = module.connections_table.name
+    USERS_TABLE_NAME      = module.users_table.name
+    ENDPOINT_URL          = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
   }
 }
 
@@ -110,6 +119,13 @@ data aws_iam_policy_document neighbors_policy_document {
       "dynamodb:Query"
     ]
     resources = [module.users_table.arn]
+  }
+  statement {
+    effect  = "Allow"
+    actions = [
+      "dynamodb:Query"
+    ]
+    resources = [module.connections_table.arn]
   }
   statement {
     effect  = "Allow"
@@ -149,7 +165,8 @@ data aws_iam_policy_document release_policy_document {
   statement {
     effect  = "Allow"
     actions = [
-      "dynamodb:Scan"
+      "dynamodb:Scan",
+      "dynamodb:Query"
     ]
     resources = [module.connections_table.arn]
   }

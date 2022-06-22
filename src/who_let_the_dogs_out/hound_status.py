@@ -1,9 +1,11 @@
 import simplejson as json
 
 from src.who_let_the_dogs_out.api_gateway.notify import notify_connections
+from src.who_let_the_dogs_out.api_util.validation import validate_user_data
 from src.who_let_the_dogs_out.dynamodb.hounds import get_dogs_out_in_neighbor_group
 
 
+@validate_user_data
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
     user_data = json.loads(event['body'])['data']

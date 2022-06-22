@@ -14,12 +14,3 @@ def get_users_in_neighbor_group(neighbor_group):
     )
 
     return list(map(lambda item: item['username'], query_results['Items']))
-
-
-def does_user_exist(neighbor_group, username):
-    query_results = users_table.query(
-        KeyConditionExpression=Key('neighbor_group').eq(neighbor_group) & Key('username').eq(username),
-        ProjectionExpression='username'
-    )
-
-    return query_results['Count'] > 0

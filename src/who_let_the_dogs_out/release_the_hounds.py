@@ -1,15 +1,18 @@
-import json
+import simplejson as json
 import time
 
 from src.who_let_the_dogs_out.api_gateway.notify import notify_connections
+from src.who_let_the_dogs_out.api_util.validation import validate_user_data
 from src.who_let_the_dogs_out.dynamodb.connections import get_current_connections
 from src.who_let_the_dogs_out.dynamodb.hounds import add_dog
 from src.who_let_the_dogs_out.model.dog_message import DogMessage
 
 
+@validate_user_data
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
     user_data = json.loads(event['body'])['data']
+
     __add_dog(connection_id, user_data)
     return {
         'statusCode': 200,
