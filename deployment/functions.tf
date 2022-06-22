@@ -65,7 +65,7 @@ module status_lambda {
   policy_json   = data.aws_iam_policy_document.status_policy_document.json
   environment   = {
     DOG_TABLE_NAME = module.hounds_table.name
-    ENDPOINT_URL   = module.websocket_api.api_endpoint
+    ENDPOINT_URL   = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
   }
 }
 
@@ -99,7 +99,7 @@ module release_lambda {
   environment   = {
     CONNECTION_TABLE_NAME = module.connections_table.name
     DOG_TABLE_NAME        = module.hounds_table.name
-    ENDPOINT_URL          = module.websocket_api.api_endpoint
+    ENDPOINT_URL          = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
   }
 }
 
@@ -136,7 +136,6 @@ module authorizer_lambda {
   runtime       = "python3.8"
   role_name     = "wltdo-authorizer-role"
   environment   = {
-    USERPOOL_ID   = "us-east-1_TSx9oPG6A"
-    APP_CLIENT_ID = "4nookoo66lnnkpsflq7to37dt0"
+    CLOUDFRONT_SECRET = var.cloudfront_secret
   }
 }

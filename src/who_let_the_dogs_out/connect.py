@@ -8,7 +8,7 @@ dynamodb_client = boto3.client('dynamodb')
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
-    username = event['requestContext']['authorizer']['username']
+    username = event['headers']['username']
     __add_connection_id(connection_id, username)
 
     return {

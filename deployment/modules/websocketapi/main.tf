@@ -82,7 +82,7 @@ resource aws_apigatewayv2_authorizer authorizer {
   api_id           = aws_apigatewayv2_api.api.id
   authorizer_type  = "REQUEST"
   authorizer_uri   = var.authorizer_lambda.invoke_arn
-  identity_sources = ["route.request.header.Authorization"]
+  identity_sources = []
   name             = "websockets-authorizer"
 }
 
@@ -97,7 +97,11 @@ resource aws_lambda_permission lambda_permission {
 }
 
 output api_endpoint {
-  value = "${aws_apigatewayv2_api.api.api_endpoint}/${aws_apigatewayv2_stage.stage.name}"
+  value = aws_apigatewayv2_api.api.api_endpoint
+}
+
+output stage {
+  value = aws_apigatewayv2_stage.stage.name
 }
 
 output execution_arn {
