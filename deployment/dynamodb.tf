@@ -40,8 +40,13 @@ module hounds_table {
     max_capacity               = 10
     target_capacity_percentage = 70
   }
-  hash_key   = "username"
+  hash_key   = "neighbor_group"
+  range_key  = "username"
   attributes = {
+    neighbor_group = {
+      name = "neighbor_group"
+      type = "S"
+    }
     username = {
       name = "username"
       type = "S"
@@ -66,15 +71,15 @@ module users_table {
     max_capacity               = 10
     target_capacity_percentage = 70
   }
-  hash_key   = "username"
-  range_key  = "neighbor_group"
+  hash_key   = "neighbor_group"
+  range_key  = "username"
   attributes = {
-    username = {
-      name = "username"
-      type = "S"
-    }
     neighbor_group = {
       name = "neighbor_group"
+      type = "S"
+    }
+    username = {
+      name = "username"
       type = "S"
     }
   }

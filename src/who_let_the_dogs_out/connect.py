@@ -1,15 +1,10 @@
-import time
-from os import getenv
-
-import boto3
-
-dynamodb_client = boto3.client('dynamodb')
+from src.who_let_the_dogs_out.dynamodb.connections import add_connection_id
 
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
-    username = event['headers']['username']
-    __add_connection_id(connection_id, username)
+    neighbor_group = event['headers']['neighbor-group']
+    add_connection_id(connection_id, neighbor_group)
 
     return {
         'statusCode': 200,
@@ -18,16 +13,3 @@ def handle(event, _):
             'Content-Type': 'application/json'
         }
     }
-
-
-def __add_connection_id(connection_id, username):
-    two_hours_in_seconds = 2 * 60 * 60
-    time_to_live = int(time.time()) + two_hours_in_seconds
-    dynamodb_client.put_item(
-        TableName=getenv('CONNECTION_TABLE_NAME'),
-        Item={
-            'connection_id': {'S': connection_id},
-            'username': {'S': username},
-            'ttl': {'N': str(time_to_live)}
-        }
-    )

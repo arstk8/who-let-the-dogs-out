@@ -1,21 +1,16 @@
 import json
 import time
-from os import getenv
 
-import boto3
-from botocore.exceptions import ClientError
-
-from src.who_let_the_dogs_out.dog_message import DogMessage
-
-dynamodb_client = boto3.client('dynamodb')
-apigateway_client = boto3.client('apigatewaymanagementapi',
-                                 endpoint_url=getenv("ENDPOINT_URL").replace('wss', 'https', 1))
+from src.who_let_the_dogs_out.api_gateway.notify import notify_connections
+from src.who_let_the_dogs_out.dynamodb.connections import get_current_connections
+from src.who_let_the_dogs_out.dynamodb.hounds import add_dog
+from src.who_let_the_dogs_out.model.dog_message import DogMessage
 
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
-    username = json.loads(event['body'])['data']
-    __add_dog(connection_id, username)
+    user_data = json.loads(event['body'])['data']
+    __add_dog(connection_id, user_data)
     return {
         'statusCode': 200,
         'body': 'Added Dog!',
@@ -25,35 +20,17 @@ def handle(event, _):
     }
 
 
-def __add_dog(connection_id, username):
+def __add_dog(connection_id, user_data):
+    username = user_data['username']
+    neighbor_group = user_data['neighborGroup']
+
     thirty_minutes_in_seconds = 30 * 60
     time_to_live = int(time.time()) + thirty_minutes_in_seconds
-    dynamodb_client.put_item(
-        TableName=getenv('DOG_TABLE_NAME'),
-        Item={
-            'username': {'S': username},
-            'ttl': {'N': str(time_to_live)}
-        }
-    )
-    __notify_connections(connection_id, DogMessage(username, time_to_live))
+
+    add_dog(username, neighbor_group, time_to_live)
+    __notify_connections(connection_id, neighbor_group, DogMessage(username, time_to_live))
 
 
-def __notify_connections(connection_id, dog_message):
-    connections = __get_current_connections(connection_id)
-    message_payload = json.dumps([dog_message.get_payload()]).encode('utf-8')
-    for connection in connections:
-        try:
-            apigateway_client.post_to_connection(Data=message_payload, ConnectionId=connection)
-        except ClientError:
-            print(f'Error sending to connection {connection}')
-
-
-def __get_current_connections(connection_id):
-    scan_results = dynamodb_client.scan(
-        TableName=getenv('CONNECTION_TABLE_NAME'),
-        ProjectionExpression='connection_id'
-    )
-
-    connection_ids = map(lambda item: item['connection_id']['S'], scan_results['Items'])
-
-    return filter(lambda candidate_connection: connection_id != candidate_connection, connection_ids)
+def __notify_connections(connection_id, neighbor_group, dog_message):
+    connections = get_current_connections(connection_id, neighbor_group)
+    notify_connections(connections, [dog_message.get_payload()])

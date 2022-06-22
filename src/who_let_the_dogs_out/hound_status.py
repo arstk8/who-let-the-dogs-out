@@ -1,18 +1,13 @@
-import json
-from os import getenv
+import simplejson as json
 
-import boto3
-
-from src.who_let_the_dogs_out.dog_message import DogMessage
-
-dynamodb_client = boto3.client('dynamodb')
-apigateway_client = boto3.client('apigatewaymanagementapi',
-                                 endpoint_url=getenv("ENDPOINT_URL").replace('wss', 'https', 1))
+from src.who_let_the_dogs_out.api_gateway.notify import notify_connections
+from src.who_let_the_dogs_out.dynamodb.hounds import get_dogs_out_in_neighbor_group
 
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
-    __post_current_state_to_connection(connection_id)
+    user_data = json.loads(event['body'])['data']
+    __post_current_state_to_connection(connection_id, user_data)
 
     return {
         'statusCode': 200,
@@ -23,11 +18,13 @@ def handle(event, _):
     }
 
 
-def __post_current_state_to_connection(connection_id):
-    scan_results = dynamodb_client.scan(TableName=getenv('DOG_TABLE_NAME'))
+def __post_current_state_to_connection(connection_id, user_data):
+    neighbor_group = user_data['neighborGroup']
+
+    dogs_out_in_neighbor_group = get_dogs_out_in_neighbor_group(neighbor_group)
 
     dog_messages = list(
-        map(lambda item: DogMessage(item['username']['S'], item['ttl']['N']).get_payload(), scan_results['Items'])
+        map(lambda dog_message: dog_message.get_payload(), dogs_out_in_neighbor_group)
     )
-    message_payload = json.dumps(dog_messages).encode('utf-8')
-    apigateway_client.post_to_connection(Data=message_payload, ConnectionId=connection_id)
+
+    notify_connections([connection_id], dog_messages)

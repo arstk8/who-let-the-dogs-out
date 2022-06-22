@@ -18,6 +18,11 @@ module websocket_api {
       lambda_function_name = module.status_lambda.function_name
       invoke_arn           = module.status_lambda.invoke_arn
     }
+    neighbors_route = {
+      route_key            = "neighbors"
+      lambda_function_name = module.neighbors_lambda.function_name
+      invoke_arn           = module.neighbors_lambda.invoke_arn
+    }
     release_route = {
       route_key            = "release"
       lambda_function_name = module.release_lambda.function_name
