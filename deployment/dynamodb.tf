@@ -83,4 +83,5 @@ module users_table {
       type = "S"
     }
   }
+  ttl = "ttl"
 }

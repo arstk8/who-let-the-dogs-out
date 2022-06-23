@@ -18,6 +18,7 @@ module connect_lambda {
   policy_json   = data.aws_iam_policy_document.connection_policy_document.json
   environment   = {
     CONNECTION_TABLE_NAME = module.connections_table.name
+    USERS_TABLE_NAME      = module.users_table.name
   }
 }
 
@@ -28,6 +29,13 @@ data aws_iam_policy_document connection_policy_document {
       "dynamodb:PutItem"
     ]
     resources = [module.connections_table.arn]
+  }
+  statement {
+    effect  = "Allow"
+    actions = [
+      "dynamodb:PutItem"
+    ]
+    resources = [module.users_table.arn]
   }
 }
 
@@ -149,7 +157,6 @@ module release_lambda {
   environment   = {
     CONNECTION_TABLE_NAME = module.connections_table.name
     DOG_TABLE_NAME        = module.hounds_table.name
-    USERS_TABLE_NAME      = module.users_table.name
     ENDPOINT_URL          = "${module.websocket_api.api_endpoint}/${module.websocket_api.stage}"
   }
 }
@@ -169,13 +176,6 @@ data aws_iam_policy_document release_policy_document {
       "dynamodb:Query"
     ]
     resources = [module.connections_table.arn]
-  }
-  statement {
-    effect  = "Allow"
-    actions = [
-      "dynamodb:Query"
-    ]
-    resources = [module.users_table.arn]
   }
   statement {
     effect  = "Allow"
