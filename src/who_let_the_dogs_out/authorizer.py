@@ -1,4 +1,4 @@
-from os import getenv
+import os
 
 
 def handle(event, _):
@@ -8,7 +8,7 @@ def handle(event, _):
         raise Exception('Unauthorized')
 
     actual_secret = headers['cloudfront-secret']
-    expected_secret = getenv('CLOUDFRONT_SECRET')
+    expected_secret = os.getenv('CLOUDFRONT_SECRET')
     if actual_secret != expected_secret:
         print('Cloudfront secret mismatch!')
         raise Exception('Unauthorized')

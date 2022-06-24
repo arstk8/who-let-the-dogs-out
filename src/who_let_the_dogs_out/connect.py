@@ -1,13 +1,16 @@
-from src.who_let_the_dogs_out.dynamodb.connections import add_connection_id
-from src.who_let_the_dogs_out.dynamodb.users import add_user
+from src.who_let_the_dogs_out.dynamodb.connections import Connections
+from src.who_let_the_dogs_out.dynamodb.users import Users
+
+connections = Connections()
+users = Users()
 
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
     neighbor_group = event['headers']['neighbor-group']
     username = event['headers']['username']
-    add_connection_id(connection_id, neighbor_group, username)
-    add_user(neighbor_group, username)
+    connections.add_connection_id(connection_id, neighbor_group, username)
+    users.add_user(neighbor_group, username)
 
     return {
         'statusCode': 200,

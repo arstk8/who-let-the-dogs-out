@@ -1,11 +1,14 @@
 import simplejson as json
 
-from src.who_let_the_dogs_out.api_gateway.notify import notify_connections
-from src.who_let_the_dogs_out.api_util.validation import validate_user_data
-from src.who_let_the_dogs_out.dynamodb.hounds import get_dogs_out_in_neighbor_group
+from src.who_let_the_dogs_out.api_gateway.notifier import Notifier
+from src.who_let_the_dogs_out.api_util.validation import ValidateUserData
+from src.who_let_the_dogs_out.dynamodb.hounds import Hounds
+
+hounds = Hounds()
+notifier = Notifier()
 
 
-@validate_user_data
+@ValidateUserData
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
     user_data = json.loads(event['body'])['data']
@@ -23,10 +26,10 @@ def handle(event, _):
 def __post_current_state_to_connection(connection_id, user_data):
     neighbor_group = user_data['neighborGroup']
 
-    dogs_out_in_neighbor_group = get_dogs_out_in_neighbor_group(neighbor_group)
+    dogs_out_in_neighbor_group = hounds.get_dogs_out_in_neighbor_group(neighbor_group)
 
     dog_messages = list(
         map(lambda dog_message: dog_message.get_payload(), dogs_out_in_neighbor_group)
     )
 
-    notify_connections([connection_id], dog_messages)
+    notifier.notify_connections([connection_id], dog_messages)
