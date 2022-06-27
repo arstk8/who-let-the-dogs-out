@@ -32,4 +32,10 @@ def __post_current_state_to_connection(connection_id, user_data):
         map(lambda dog_message: dog_message.get_payload(), dogs_out_in_neighbor_group)
     )
 
-    notifier.notify_connections([connection_id], dog_messages)
+    notifier.notify_connections(
+        [connection_id],
+        {
+            'action': 'status',
+            'data': dog_messages
+        }
+    )

@@ -67,6 +67,9 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
         }
 
         apigateway_client.post_to_connection.assert_called_once_with(
-            Data=json.dumps([self.MOCK_USERNAME1, self.MOCK_USERNAME2]).encode('utf-8'),
+            Data=json.dumps({
+                'action': 'neighbors',
+                'data': [self.MOCK_USERNAME1, self.MOCK_USERNAME2]
+            }).encode('utf-8'),
             ConnectionId=self.MOCK_CONNECTION_ID
         )

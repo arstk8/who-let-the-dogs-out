@@ -72,9 +72,12 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
         }
 
         apigateway_client.post_to_connection.assert_called_once_with(
-            Data=json.dumps([
-                DogMessage(self.MOCK_USERNAME1, self.MOCK_TTL1).get_payload(),
-                DogMessage(self.MOCK_USERNAME2, self.MOCK_TTL2).get_payload()
-            ]).encode('utf-8'),
+            Data=json.dumps({
+                'action': 'status',
+                'data': [
+                    DogMessage(self.MOCK_USERNAME1, self.MOCK_TTL1).get_payload(),
+                    DogMessage(self.MOCK_USERNAME2, self.MOCK_TTL2).get_payload()
+                ]
+            }).encode('utf-8'),
             ConnectionId=self.MOCK_CONNECTION_ID
         )

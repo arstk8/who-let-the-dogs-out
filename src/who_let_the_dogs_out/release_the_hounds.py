@@ -41,4 +41,10 @@ def __add_dog(connection_id, user_data):
 
 def __notify_connections(connection_id, neighbor_group, dog_message):
     connections_ids = connections.get_current_connections(connection_id, neighbor_group)
-    notifier.notify_connections(connections_ids, [dog_message.get_payload()])
+    notifier.notify_connections(
+        connections_ids,
+        {
+            'action': 'release',
+            'data': [dog_message.get_payload()]
+        }
+    )

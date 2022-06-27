@@ -80,15 +80,18 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
 
         assert apigateway_client.post_to_connection.call_args_list == [
             call(
-                Data=json.dumps(
-                    [{'username': self.MOCK_USERNAME, 'timeToLive': self.MOCK_TIME_VALUE + 30 * 60}]
+                Data=json.dumps({
+                    'action': 'release',
+                    'data': [{'username': self.MOCK_USERNAME, 'timeToLive': self.MOCK_TIME_VALUE + 30 * 60}]
+                }
                 ).encode('utf-8'),
                 ConnectionId=self.MOCK_CONNECTION_ID2
             ),
             call(
-                Data=json.dumps(
-                    [{'username': self.MOCK_USERNAME, 'timeToLive': self.MOCK_TIME_VALUE + 30 * 60}]
-                ).encode('utf-8'),
+                Data=json.dumps({
+                    'action': 'release',
+                    'data': [{'username': self.MOCK_USERNAME, 'timeToLive': self.MOCK_TIME_VALUE + 30 * 60}]
+                }).encode('utf-8'),
                 ConnectionId=self.MOCK_CONNECTION_ID3
             )
         ]
