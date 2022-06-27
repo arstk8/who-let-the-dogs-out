@@ -1,29 +1,14 @@
-import os
-
 import pytest
 
-
-class Fixtures:
-    MOCK_CLOUDFRONT_SECRET = 'some secret'
-
-    @pytest.fixture
-    def get_env(self, mocker):
-        get_env = mocker.patch.object(os, os.getenv.__name__)
-
-        def stub(variable_name):
-            if 'CLOUDFRONT_SECRET' == variable_name:
-                return self.MOCK_CLOUDFRONT_SECRET
-
-        get_env.side_effect = stub
-        return get_env
+from test.who_let_the_dogs_out.common_fixtures import AwsFixtures, BasicPythonFixtures
 
 
-class TestHandler(Fixtures):
+class TestHandler(AwsFixtures, BasicPythonFixtures):
     MOCK_CONNECTION_ID = 'some connection id'
     MOCK_METHOD_ARN_SANS_ROUTE = 'some arn'
     MOCK_METHOD_ARN = f'{MOCK_METHOD_ARN_SANS_ROUTE}/some specific route'
 
-    def test_handle(self, get_env):
+    def test_handle(self):
         from src.who_let_the_dogs_out.authorizer import handle
         return_value = handle({
             'requestContext': {
@@ -51,7 +36,7 @@ class TestHandler(Fixtures):
             }
         }
 
-    def test_handle_secret_not_present(self, get_env):
+    def test_handle_secret_not_present(self):
         from src.who_let_the_dogs_out.authorizer import handle
         with pytest.raises(Exception) as e:
             handle({
@@ -65,7 +50,7 @@ class TestHandler(Fixtures):
 
         assert str(e.value) == 'Unauthorized'
 
-    def test_handle_secret_mismatch(self, get_env):
+    def test_handle_secret_mismatch(self):
         from src.who_let_the_dogs_out.authorizer import handle
         with pytest.raises(Exception) as e:
             handle({

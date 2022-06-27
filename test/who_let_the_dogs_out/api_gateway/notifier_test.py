@@ -1,46 +1,13 @@
-import os
 from decimal import Decimal
 from unittest.mock import call
 
-import boto3
-import pytest
 from botocore.exceptions import ClientError
 
 from src.who_let_the_dogs_out.api_gateway.notifier import Notifier
+from test.who_let_the_dogs_out.common_fixtures import AwsFixtures, BasicPythonFixtures
 
 
-class Fixtures:
-    MOCK_ENDPOINT_URL_SANS_WSS = 'someurl'
-    MOCK_ENDPOINT_URL = f'wss://{MOCK_ENDPOINT_URL_SANS_WSS}'
-
-    @pytest.fixture(autouse=True)
-    def get_env(self, mocker):
-        get_env = mocker.patch.object(os, os.getenv.__name__)
-
-        def stub(variable_name):
-            if 'ENDPOINT_URL' == variable_name:
-                return self.MOCK_ENDPOINT_URL
-
-        get_env.side_effect = stub
-        return get_env
-
-    @pytest.fixture
-    def apigateway_client(self, mocker):
-        return mocker.Mock()
-
-    @pytest.fixture(autouse=True)
-    def boto3_client(self, mocker, apigateway_client):
-        boto3_resource = mocker.patch.object(boto3, boto3.client.__name__)
-
-        def stub(resource_name, endpoint_url):
-            if resource_name == 'apigatewaymanagementapi' and f'https://{self.MOCK_ENDPOINT_URL_SANS_WSS}' == endpoint_url:
-                return apigateway_client
-
-        boto3_resource.side_effect = stub
-        return boto3_resource
-
-
-class TestHandler(Fixtures):
+class TestHandler(AwsFixtures, BasicPythonFixtures):
 
     def test_notify_single_connection(self, apigateway_client):
         connection_id = 'some connection'
