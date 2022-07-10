@@ -1,5 +1,5 @@
-import time
 import os
+import time
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Key
@@ -46,14 +46,14 @@ class Connections:
 
         scan_results = self.connection_table.scan(
             ProjectionExpression='connection_id',
-            FilterExpression=Attr('connection_id').ne(connection_id) & Attr('neighbor_group').eq(neighbor_group)
+            FilterExpression=Attr('neighbor_group').eq(neighbor_group)
         )
         scan_items.extend(scan_results['Items'])
 
         while 'LastEvaluatedKey' in scan_results:
             scan_results = self.connection_table.scan(
                 ProjectionExpression='connection_id',
-                FilterExpression=Attr('connection_id').ne(connection_id) & Attr('neighbor_group').eq(neighbor_group),
+                FilterExpression=Attr('neighbor_group').eq(neighbor_group),
                 ExclusiveStartKey=scan_results['LastEvaluatedKey']
             )
             scan_items.extend(scan_results['Items'])

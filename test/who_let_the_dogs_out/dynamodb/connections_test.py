@@ -69,11 +69,11 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
         # noinspection PyPep8Naming
         def stub(ProjectionExpression, FilterExpression, ExclusiveStartKey=None):
             if 'connection_id' == ProjectionExpression \
-                    and Attr('connection_id').ne(self.MOCK_CONNECTION_ID1) \
-                    & Attr('neighbor_group').eq(self.MOCK_NEIGHBOR_GROUP) == FilterExpression \
+                    and Attr('neighbor_group').eq(self.MOCK_NEIGHBOR_GROUP) == FilterExpression \
                     and ExclusiveStartKey is None:
                 return {
                     'Items': [
+                        {'connection_id': self.MOCK_CONNECTION_ID1},
                         {'connection_id': self.MOCK_CONNECTION_ID2},
                         {'connection_id': self.MOCK_CONNECTION_ID3},
                         {'connection_id': self.MOCK_CONNECTION_ID4}
@@ -82,6 +82,7 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
 
         connections_table.scan.side_effect = stub
         assert Connections().get_current_connections(self.MOCK_CONNECTION_ID1, self.MOCK_NEIGHBOR_GROUP) == [
+            self.MOCK_CONNECTION_ID1,
             self.MOCK_CONNECTION_ID2,
             self.MOCK_CONNECTION_ID3,
             self.MOCK_CONNECTION_ID4
@@ -93,9 +94,13 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
         # noinspection PyPep8Naming
         def stub(ProjectionExpression, FilterExpression, ExclusiveStartKey=None):
             if 'connection_id' == ProjectionExpression \
-                    and Attr('connection_id').ne(self.MOCK_CONNECTION_ID1) \
-                    & Attr('neighbor_group').eq(self.MOCK_NEIGHBOR_GROUP) == FilterExpression:
+                    and Attr('neighbor_group').eq(self.MOCK_NEIGHBOR_GROUP) == FilterExpression:
                 if ExclusiveStartKey is None:
+                    return {
+                        'Items': [{'connection_id': self.MOCK_CONNECTION_ID1}],
+                        'LastEvaluatedKey': self.MOCK_CONNECTION_ID1
+                    }
+                elif ExclusiveStartKey == self.MOCK_CONNECTION_ID1:
                     return {
                         'Items': [{'connection_id': self.MOCK_CONNECTION_ID2}],
                         'LastEvaluatedKey': self.MOCK_CONNECTION_ID2
@@ -112,6 +117,7 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
 
         connections_table.scan.side_effect = stub
         assert Connections().get_current_connections(self.MOCK_CONNECTION_ID1, self.MOCK_NEIGHBOR_GROUP) == [
+            self.MOCK_CONNECTION_ID1,
             self.MOCK_CONNECTION_ID2,
             self.MOCK_CONNECTION_ID3,
             self.MOCK_CONNECTION_ID4

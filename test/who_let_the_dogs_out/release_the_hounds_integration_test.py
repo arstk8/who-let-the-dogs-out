@@ -34,10 +34,13 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
 
         # noinspection PyPep8Naming
         def connections_scan_stub(ProjectionExpression, FilterExpression):
-            if 'connection_id' == ProjectionExpression and Attr('connection_id').ne(self.MOCK_CONNECTION_ID1) & Attr(
-                    'neighbor_group').eq(self.MOCK_NEIGHBOR_GROUP) == FilterExpression:
+            if 'connection_id' == ProjectionExpression and Attr('neighbor_group').eq(
+                    self.MOCK_NEIGHBOR_GROUP) == FilterExpression:
                 return {
                     'Items': [
+                        {
+                            'connection_id': self.MOCK_CONNECTION_ID1
+                        },
                         {
                             'connection_id': self.MOCK_CONNECTION_ID2
                         },
@@ -79,6 +82,14 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
         )
 
         assert apigateway_client.post_to_connection.call_args_list == [
+            call(
+                Data=json.dumps({
+                    'action': 'release',
+                    'data': [{'username': self.MOCK_USERNAME, 'timeToLive': self.MOCK_TIME_VALUE + 30 * 60}]
+                }
+                ).encode('utf-8'),
+                ConnectionId=self.MOCK_CONNECTION_ID1
+            ),
             call(
                 Data=json.dumps({
                     'action': 'release',
