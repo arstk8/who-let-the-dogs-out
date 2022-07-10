@@ -12,8 +12,8 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
             'requestContext': {
                 'connectionId': self.MOCK_CONNECTION_ID
             },
-            'headers': {
-                'neighbor-group': self.MOCK_NEIGHBOR_GROUP,
+            'queryStringParameters': {
+                'neighborGroup': self.MOCK_NEIGHBOR_GROUP,
                 'username': self.MOCK_USERNAME
             }
         }, {})

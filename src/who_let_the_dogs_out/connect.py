@@ -7,8 +7,8 @@ users = Users()
 
 def handle(event, _):
     connection_id = event['requestContext']['connectionId']
-    neighbor_group = event['headers']['neighbor-group']
-    username = event['headers']['username']
+    neighbor_group = event['queryStringParameters']['neighborGroup']
+    username = event['queryStringParameters']['username']
     connections.add_connection_id(connection_id, neighbor_group, username)
     users.add_user(neighbor_group, username)
 
