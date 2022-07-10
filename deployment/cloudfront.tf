@@ -36,8 +36,8 @@ resource aws_cloudfront_distribution distribution {
     }
   }
   viewer_certificate {
-    acm_certificate_arn            = aws_acm_certificate.certificate.arn
-    ssl_support_method             = "sni-only"
+    acm_certificate_arn = aws_acm_certificate.certificate.arn
+    ssl_support_method  = "sni-only"
   }
 }
 
@@ -75,7 +75,7 @@ resource aws_cloudfront_origin_request_policy request_policy {
     }
   }
   query_strings_config {
-    query_string_behavior = "none"
+    query_string_behavior = "all"
   }
   cookies_config {
     cookie_behavior = "none"
