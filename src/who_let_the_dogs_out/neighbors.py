@@ -1,18 +1,15 @@
-import simplejson as json
-
 from src.who_let_the_dogs_out.api_gateway.notifier import Notifier
-from src.who_let_the_dogs_out.api_util.validation import ValidateUserData
+from src.who_let_the_dogs_out.api_util.user_data import UserDataSupplier
 from src.who_let_the_dogs_out.dynamodb.users import Users
 
 notifier = Notifier()
 users = Users()
 
 
-@ValidateUserData
-def handle(event, _):
+@UserDataSupplier
+def handle(event, user_data):
     connection_id = event['requestContext']['connectionId']
-    data = json.loads(event['body'])['data']
-    __post_current_state_to_connection(connection_id, data)
+    __post_current_state_to_connection(connection_id, user_data)
 
     return {
         'statusCode': 200,
@@ -23,8 +20,8 @@ def handle(event, _):
     }
 
 
-def __post_current_state_to_connection(connection_id, data):
-    neighbor_group = data['neighborGroup']
+def __post_current_state_to_connection(connection_id, user_data):
+    neighbor_group = user_data['neighborGroup']
     dogs_out_in_neighbor_group = users.get_users_in_neighbor_group(neighbor_group)
     notifier.notify_connections(
         [connection_id],

@@ -1,17 +1,14 @@
-import simplejson as json
-
 from src.who_let_the_dogs_out.api_gateway.notifier import Notifier
-from src.who_let_the_dogs_out.api_util.validation import ValidateUserData
+from src.who_let_the_dogs_out.api_util.user_data import UserDataSupplier
 from src.who_let_the_dogs_out.dynamodb.hounds import Hounds
 
 hounds = Hounds()
 notifier = Notifier()
 
 
-@ValidateUserData
-def handle(event, _):
+@UserDataSupplier
+def handle(event, user_data):
     connection_id = event['requestContext']['connectionId']
-    user_data = json.loads(event['body'])['data']
     __post_current_state_to_connection(connection_id, user_data)
 
     return {

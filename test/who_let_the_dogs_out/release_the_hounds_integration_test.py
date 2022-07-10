@@ -55,15 +55,11 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
         return_value = handle({
             'requestContext': {
                 'connectionId': self.MOCK_CONNECTION_ID1
-            },
-            'body': json.dumps({
-                'data': {
-                    'neighborGroup': self.MOCK_NEIGHBOR_GROUP,
-                    'username': self.MOCK_USERNAME
-                }
-            })
-
-        }, {})
+            }
+        }, {
+            'neighborGroup': self.MOCK_NEIGHBOR_GROUP,
+            'username': self.MOCK_USERNAME
+        })
 
         assert return_value == {
             'statusCode': 200,
