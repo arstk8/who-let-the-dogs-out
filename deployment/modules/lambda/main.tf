@@ -1,5 +1,10 @@
-variable filename {
-  description = "The zip file containing the source code of the lambda"
+variable s3_bucket {
+  description = "The s3 bucket that contains the source code of the lambda"
+  type        = string
+}
+
+variable s3_key {
+  description = "The s3 key of the file that contains the source code of the lambda"
   type        = string
 }
 
@@ -42,11 +47,12 @@ variable environment {
 }
 
 resource aws_lambda_function function {
-  filename         = var.filename
+  s3_bucket        = var.s3_bucket
+  s3_key           = var.s3_key
   function_name    = var.function_name
   role             = aws_iam_role.lambda_role.arn
   handler          = var.handler
-  source_code_hash = filebase64sha256(var.filename)
+  source_code_hash = filebase64sha256(var.s3_key)
 
   runtime = var.runtime
 

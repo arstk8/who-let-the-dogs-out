@@ -10,7 +10,8 @@ locals {
 
 module connect_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.connect_function_name
   handler       = "src/who_let_the_dogs_out/connect.handle"
   runtime       = "python3.8"
@@ -42,7 +43,8 @@ data aws_iam_policy_document connection_policy_document {
 
 module disconnect_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.disconnect_function_name
   handler       = "src/who_let_the_dogs_out/disconnect.handle"
   runtime       = "python3.8"
@@ -66,7 +68,8 @@ data aws_iam_policy_document disconnect_policy_document {
 
 module status_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.status_function_name
   handler       = "src/who_let_the_dogs_out/hound_status.handle"
   runtime       = "python3.8"
@@ -107,7 +110,8 @@ data aws_iam_policy_document status_policy_document {
 
 module neighbors_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.neighbors_function_name
   handler       = "src/who_let_the_dogs_out/neighbors.handle"
   runtime       = "python3.8"
@@ -148,7 +152,8 @@ data aws_iam_policy_document neighbors_policy_document {
 
 module release_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.release_function_name
   handler       = "src/who_let_the_dogs_out/release_the_hounds.handle"
   runtime       = "python3.8"
@@ -190,7 +195,8 @@ data aws_iam_policy_document release_policy_document {
 
 module unrelease_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.unrelease_function_name
   handler       = "src/who_let_the_dogs_out/let_the_hounds_in.handle"
   runtime       = "python3.8"
@@ -232,7 +238,8 @@ data aws_iam_policy_document unrelease_policy_document {
 
 module authorizer_lambda {
   source        = "./modules/lambda"
-  filename      = "dist.zip"
+  s3_bucket     = aws_s3_bucket.dist_bucket.id
+  s3_key        = aws_s3_object.dist_object.id
   function_name = local.authorizer_function_name
   handler       = "src/who_let_the_dogs_out/authorizer.handle"
   runtime       = "python3.8"
