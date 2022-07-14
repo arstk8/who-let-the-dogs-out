@@ -3,6 +3,7 @@ import time
 
 import boto3
 import pytest
+from boto3.dynamodb.conditions import Key, Attr
 
 MOCK_CONNECTION_TABLE = 'some connection table'
 MOCK_DOG_TABLE = 'some dog table'
@@ -66,6 +67,31 @@ class AwsFixtures:
 
         boto3_resource.side_effect = stub
         return boto3_resource
+
+    @staticmethod
+    def stub_connection_query(connections_table, connection_id, data):
+        # noinspection PyPep8Naming
+        def connections_query_stub(KeyConditionExpression):
+            if Key('connection_id').eq(connection_id) == KeyConditionExpression:
+                return {
+                    'Items': data,
+                    'Count': len(data)
+                }
+
+        connections_table.query.side_effect = connections_query_stub
+
+    @staticmethod
+    def stub_connection_scan(connections_table, neighbor_group, data):
+        # noinspection PyPep8Naming
+        def connections_scan_stub(ProjectionExpression, FilterExpression):
+            if 'connection_id' == ProjectionExpression and Attr('neighbor_group').eq(
+                    neighbor_group) == FilterExpression:
+                return {
+                    'Items': data,
+                    'Count': len(data)
+                }
+
+        connections_table.scan.side_effect = connections_scan_stub
 
 
 class BasicPythonFixtures:

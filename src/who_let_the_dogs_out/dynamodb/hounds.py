@@ -1,5 +1,6 @@
 
 import os
+
 import boto3
 from boto3.dynamodb.conditions import Key
 
@@ -24,11 +25,19 @@ class Hounds:
             )
         )
 
-    def add_dog(self, username, neighbor_group, time_to_live):
+    def add_dog(self, neighbor_group, username, time_to_live):
         self.dog_table.put_item(
             Item={
                 'neighbor_group': neighbor_group,
                 'username': username,
                 'ttl': time_to_live
+            }
+        )
+
+    def remove_dog(self, neighbor_group, username):
+        self.dog_table.delete_item(
+            Key={
+                'neighbor_group': neighbor_group,
+                'username': username
             }
         )

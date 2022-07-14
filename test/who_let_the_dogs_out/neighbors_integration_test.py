@@ -13,20 +13,16 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
     def test_handle(self, connections_table, users_table, apigateway_client):
         from src.who_let_the_dogs_out.neighbors import handle
 
-        # noinspection PyPep8Naming
-        def connections_stub(KeyConditionExpression):
-            if Key('connection_id').eq(self.MOCK_CONNECTION_ID) == KeyConditionExpression:
-                return {
-                    'Items': [
-                        {
-                            'neighbor_group': self.MOCK_NEIGHBOR_GROUP,
-                            'username': self.MOCK_USERNAME1
-                        }
-                    ],
-                    'Count': 1
+        AwsFixtures.stub_connection_query(
+            connections_table,
+            self.MOCK_CONNECTION_ID,
+            [
+                {
+                    'neighbor_group': self.MOCK_NEIGHBOR_GROUP,
+                    'username': self.MOCK_USERNAME1
                 }
-
-        connections_table.query.side_effect = connections_stub
+            ]
+        )
 
         # noinspection PyPep8Naming
         def users_stub(KeyConditionExpression, ProjectionExpression):

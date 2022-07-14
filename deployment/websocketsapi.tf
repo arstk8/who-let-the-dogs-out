@@ -27,6 +27,11 @@ module websocket_api {
       route_key            = "release"
       lambda_function_name = module.release_lambda.function_name
       invoke_arn           = module.release_lambda.invoke_arn
+    },
+    unrelease_route = {
+      route_key            = "unrelease"
+      lambda_function_name = module.unrelease_lambda.function_name
+      invoke_arn           = module.unrelease_lambda.invoke_arn
     }
   }
   authorizer_lambda = {

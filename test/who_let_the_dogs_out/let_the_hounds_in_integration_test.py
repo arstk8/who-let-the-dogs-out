@@ -11,10 +11,9 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
     MOCK_CONNECTION_ID3 = 'yet another id'
     MOCK_NEIGHBOR_GROUP = 'some group'
     MOCK_USERNAME = 'some user'
-    MOCK_TTL = 12345
 
     def test_handle(self, connections_table, dog_table, apigateway_client):
-        from src.who_let_the_dogs_out.release_the_hounds import handle
+        from src.who_let_the_dogs_out.let_the_hounds_in import handle
 
         AwsFixtures.stub_connection_query(connections_table, self.MOCK_CONNECTION_ID1, [
             {
@@ -46,32 +45,31 @@ class TestHandler(AwsFixtures, BasicPythonFixtures):
 
         assert return_value == {
             'statusCode': 200,
-            'body': 'Added Dog!',
+            'body': 'Set Dog to In!',
             'headers': {
                 'Content-Type': 'application/json'
             }
         }
 
-        dog_table.put_item.assert_called_once_with(
-            Item={
+        dog_table.delete_item.assert_called_once_with(
+            Key={
                 'neighbor_group': self.MOCK_NEIGHBOR_GROUP,
-                'username': self.MOCK_USERNAME,
-                'ttl': self.MOCK_TIME_VALUE + 1800
+                'username': self.MOCK_USERNAME
             }
         )
 
-        data = [{'username': self.MOCK_USERNAME, 'timeToLive': self.MOCK_TIME_VALUE + 30 * 60}]
+        data = [{'username': self.MOCK_USERNAME, 'timeToLive': None}]
         assert apigateway_client.post_to_connection.call_args_list == [
             call(
-                Data=json.dumps({'action': 'release', 'data': data}).encode('utf-8'),
+                Data=json.dumps({'action': 'unrelease', 'data': data}).encode('utf-8'),
                 ConnectionId=self.MOCK_CONNECTION_ID1
             ),
             call(
-                Data=json.dumps({'action': 'release', 'data': data}).encode('utf-8'),
+                Data=json.dumps({'action': 'unrelease', 'data': data}).encode('utf-8'),
                 ConnectionId=self.MOCK_CONNECTION_ID2
             ),
             call(
-                Data=json.dumps({'action': 'release', 'data': data}).encode('utf-8'),
+                Data=json.dumps({'action': 'unrelease', 'data': data}).encode('utf-8'),
                 ConnectionId=self.MOCK_CONNECTION_ID3
             )
         ]
